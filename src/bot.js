@@ -21,7 +21,8 @@
  */
 import { ELEMENT, COMMANDS } from './constants';
 import {
-    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance
+    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
+    moveLeft, moveDown, moveRight, moveUp
 } from './utils';
 
 // Bot Example
@@ -123,7 +124,7 @@ export function rate(board, position, moveTo){
     let rate = -Infinity;
     const element = getElementByXY(board, position);
     switch (element){
-        //If Element is mo body
+        //If Element is my body
         case mySnake(element):
             rate = -10;
             break;
@@ -131,7 +132,7 @@ export function rate(board, position, moveTo){
             rate = 0;
             break;
         case ELEMENT.STONE:
-            if(eatTheStone(getMyLength()))
+            if(eatTheStone(getMyLength(board)))
             {
                 rate = 10;
             }
@@ -164,9 +165,61 @@ export function rate(board, position, moveTo){
     return rate;
 }
 
-export function getMyLength(){
-    const head = getHeadPosition();
-    return 3;
+export function getMyLength(board){
+    let length = 1;
+    const head = getHeadPosition(board);
+
+    length += calculateLength(head);
+    return length;
+}
+
+export function getDirection(element){
+
+}
+
+export function calculateLength(elementPos, direction = false){
+    const element = getElementByXY(elementPos);
+
+    if(!direction){
+        direction = getDirection(element);
+    }
+
+    if(getTailElements().indexOf(element)){
+        return 0
+    }
+    else{
+        let next = elementPos;
+        switch(element, direction){
+            case ELEMENT.HEAD_DOWN:
+                next = moveUp(elementPos);
+                break;
+            case ELEMENT.HEAD_UP:
+                break;
+            case ELEMENT.BODY_HORIZONTAL:
+                next = moveLeft(elementPos);
+                break;
+            case ELEMENT.BODY_VERTICAL:
+                next = moveDown(elementPos);
+                break;
+            case ELEMENT.BODY_LEFT_DOWN:
+                next = moveDown(elementPos);
+                break;
+            case ELEMENT.BODY_LEFT_UP:
+                next = moveLeft(elementPos);
+                break;
+            case ELEMENT.BODY_RIGHT_DOWN:
+                next = moveDown(elementPos);
+                break;
+            case ELEMENT.BODY_LEFT_UP:
+                next = moveRight(elementPos);
+                break;
+            default:
+                return 0;
+                break;
+        }
+        calculateLength(next);
+        return 1;
+    }
 }
 
 export function eatTheStone(length){

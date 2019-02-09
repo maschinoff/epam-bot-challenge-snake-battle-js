@@ -20,7 +20,7 @@
  * #L%
  */
 import {
-    getNextSnakeMove, getRatings, rate, myBody, mySnake, eatTheStone
+    getNextSnakeMove, getRatings, rate, myBody, mySnake, eatTheStone, getMyLength, calculateLength, getDirection
 } from './bot';
 import {
     COMMANDS, ELEMENT
@@ -196,6 +196,34 @@ describe("bot", () => {
             const body = 5;
             const result = eatTheStone(body);
             expect(result).toEqual(false);
+        });
+    });
+
+    it('should calculate length properly', () => {
+        const board =
+            '******' +
+            '* ╔=►*' +
+            '* ║ 8*' +
+            '* ╚╗ *' +
+            '* ╓╝ *' +
+            '******';
+        const length = 9;
+        const result = getMyLength(board);
+        expect(result).toEqual(length);
+    });
+
+    describe('calculate', () => {
+        it('should move left', () => {
+            const result = calculateLength();
+        });
+        expect(true).toEqual(false);
+    });
+
+    describe('get direction', () => {
+        it('should return up', () => {
+           const element = ELEMENT.HEAD_UP;
+           const result = getDirection(element);
+           expect
         });
     });
 });
