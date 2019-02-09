@@ -214,16 +214,39 @@ describe("bot", () => {
 
     describe('calculate', () => {
         it('should move left', () => {
-            const result = calculateLength();
+            const board =
+                '******' +
+                '* ╔=►*' +
+                '* ║ 8*' +
+                '* ╚╗ *' +
+                '* ╓╝ *' +
+                '******';
+            const head = getHeadPosition(board);
+            const result = calculateLength(board, head);
+            expect(true).toEqual(false);
         });
-        expect(true).toEqual(false);
     });
 
     describe('get direction', () => {
-        it('should return up', () => {
+        it('should return down', () => {
            const element = ELEMENT.HEAD_UP;
            const result = getDirection(element);
-           expect
+           expect(result).toEqual(1);
+        });
+        it('should return up', () => {
+            const element = ELEMENT.HEAD_DOWN;
+            const result = getDirection(element);
+            expect(result).toEqual(0);
+        });
+        it('should return left', () => {
+            const element = ELEMENT.HEAD_RIGHT;
+            const result = getDirection(element);
+            expect(result).toEqual(0);
+        });
+        it('should return left', () => {
+            const element = ELEMENT.HEAD_LEFT;
+            const result = getDirection(element);
+            expect(result).toEqual(1);
         });
     });
 });

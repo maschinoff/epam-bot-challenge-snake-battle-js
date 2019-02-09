@@ -169,17 +169,12 @@ export function getMyLength(board){
     let length = 1;
     const head = getHeadPosition(board);
 
-    length += calculateLength(head);
+    length += calculateLength(board, head);
     return length;
 }
 
-export function getDirection(element){
-
-}
-
-export function calculateLength(elementPos, direction = false){
-    const element = getElementByXY(elementPos);
-
+export function calculateLength(board, elementPos, direction = false){
+    const element = getElementByXY(board, elementPos);
     if(!direction){
         direction = getDirection(element);
     }
@@ -217,9 +212,32 @@ export function calculateLength(elementPos, direction = false){
                 return 0;
                 break;
         }
-        calculateLength(next);
+        calculateLength(board, next, direction);
         return 1;
     }
+}
+
+export function getDirection(element){
+    let direction = null;
+
+    switch(element){
+        case ELEMENT.HEAD_UP:
+            direction = 1;
+            break;
+        case ELEMENT.HEAD_RIGHT:
+            direction = 0;
+            break;
+        case ELEMENT.HEAD_DOWN:
+            direction = 0;
+            break;
+        case ELEMENT.HEAD_LEFT:
+            direction = 1;
+            break;
+        default:
+            break;
+    }
+
+    return direction;
 }
 
 export function eatTheStone(length){
