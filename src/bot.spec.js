@@ -222,7 +222,7 @@ describe("bot", () => {
                 '* ╓╝ *' +
                 '******';
             const head = getHeadPosition(board);
-            const result = calculateLength(board, head);
+            const result = getDirection(head);
             expect(true).toEqual(false);
         });
     });
