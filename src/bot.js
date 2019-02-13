@@ -21,7 +21,8 @@
  */
 import { ELEMENT, COMMANDS } from './constants';
 import {
-    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance, isAtrap
+    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
+    isAtrap, getXYByPosition
 } from './utils';
 
 // Bot Example
@@ -112,6 +113,15 @@ function maschinoff(board, logger){
         const stones = getAllElementPositions(board, ELEMENT.STONE);
         const stone = findNearest(headPosition, stones);
         hunt = findNearest(headPosition, [hunt, stone]);
+    }
+
+    if(inFury(board)){
+        //get position of the nearest enemy
+        const enemies = getAllEnemiesPositions(board);
+        const enemy = findNearest(headPosition, enemies);
+        const distance = getDistance(headPosition, enemy);
+        if(distance <= 5)
+            hunt = enemy;
     }
 
     logger('Hunt:' + JSON.stringify(hunt));
@@ -230,7 +240,19 @@ export function mySnake(element){
     return false;
 }
 
-function getEnemySnake(){
+export function getAllEnemiesPositions(board){
+    const positions = [];
+    const enemyElements = getEnemySnake();
+    for(let i = 0; i < board.length; i++){
+        if(enemyElements.indexOf(board[i]) !== -1){
+            positions.push(getXYByPosition(board, i));
+        }
+    }
+
+    return positions.length ? positions : [];
+}
+
+export function getEnemySnake(){
     let enemy = [];
     return enemy.concat(getEnemyHeadElements(), getEnemyBodyElements(), getEnemyTailElements());
 }

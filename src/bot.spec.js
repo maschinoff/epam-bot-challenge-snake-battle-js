@@ -20,7 +20,8 @@
  * #L%
  */
 import {
-    getNextSnakeMove, getRatings, rate, myBody, mySnake, eatTheStone, getMyLength, calculateLength, getDirection
+    getNextSnakeMove, getRatings, rate, myBody, mySnake, eatTheStone, getMyLength, calculateLength, getDirection,
+    getAllEnemiesPositions
 } from './bot';
 import {
     COMMANDS, ELEMENT
@@ -151,6 +152,44 @@ describe("bot", () => {
                 '☼☼☼☼☼';
             const move = getNextSnakeMove(board, mockLogger);
             expect(move).toEqual(COMMANDS.DOWN);
+        });
+
+        it('should pursue the enemy', () => {
+            const board =
+                '☼☼☼☼☼☼☼☼☼☼☼☼' +
+                '☼        ○ ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼  <    ♥  ☼' +
+                '☼       ║  ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼☼☼☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.LEFT);
+        });
+
+        it('should not pursue the enemy', () => {
+            const board =
+                '☼☼☼☼☼☼☼☼☼☼☼☼' +
+                '☼        ○ ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼  <     ♥ ☼' +
+                '☼        ║ ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼☼☼☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.UP);
         });
     });
 
@@ -315,6 +354,25 @@ describe("bot", () => {
         expect(result).toEqual(length);
     });
 
+    it('should get all enemies position', () => {
+        const board =
+            '******' +
+            '* ○ >*' +
+            '* =► *' +
+            '* ♣× *' +
+            '* ─┘│*' +
+            '******';
+        const res = [
+            {x: 4, y: 1},
+            {x: 3, y: 3},
+            {x: 2, y: 4},
+            {x: 3, y: 4},
+            {x: 4, y: 4},
+        ];
+        const result = getAllEnemiesPositions(board);
+        expect(result).toEqual(res);
+    });
+
     it('should calculate length properly II', () => {
         const board =
             '*******' +
@@ -327,11 +385,5 @@ describe("bot", () => {
         const length = 8;
         const result = getMyLength(board);
         expect(result).toEqual(length);
-    });
-
-
-
-    it('should pursue the enemy', () => {
-
     });
 });
