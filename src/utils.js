@@ -77,7 +77,7 @@ export function isNear(board, x, y, element) {
 
 export function isAtrap(board, position){
     const surround = getSurround(board, position);
-    const result = surround.filter((element => element == ELEMENT.WALL));
+    const result = surround.filter((element => element === ELEMENT.WALL));
 
     return (result.length > 2) ? true : false;
 }
@@ -141,12 +141,14 @@ export function getElementByXY(board, position) {
 export function getAllElementPositions(board, element){
     const positions = [];
     for(let i = 0; i < board.length; i++){
-        if(board[i] === element)
+        if(board[i] === element){
             //If element in trap
-            if(!isAtrap(board, i))
+            if(!isAtrap(board, getXYByPosition(board, i)))
+            {
                 positions.push(getXYByPosition(board, i));
+            }
+        }
     }
-
     return positions.length ? positions : [];
 }
 

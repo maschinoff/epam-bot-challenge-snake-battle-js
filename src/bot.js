@@ -79,7 +79,7 @@ function getCommandByRaitings(raitings) {
         }
     }
 
-    return indexToCommand[maxIndex];
+    return indexToCommand[maxIndex]+' '+COMMANDS.ACT;
 }
 
 ////Maschinoff day II
@@ -94,8 +94,11 @@ function maschinoff(board, logger){
     }
     logger('Head:' + JSON.stringify(headPosition));
 
+    //Hunt apple if length less than 5
     const apples = getAllElementPositions(board, ELEMENT.APPLE);
     const apple = findNearest(headPosition, apples);
+
+    //Hunt apple if length more than 5
 
     const raitings = getRatings(board, headPosition, apple);
 
@@ -122,11 +125,14 @@ export function rate(board, position, moveTo){
             rate = 0;
             break;
         case ELEMENT.STONE:
-            if(eatTheStone(2))
+            let lenght = getMyLength(board);
+            if(eatTheStone(lenght))
             {
                 rate = 10;
             }
-            rate = -1000;
+            else{
+                rate = -1000;
+            }
             break;
         case ELEMENT.APPLE:
             rate = 20;

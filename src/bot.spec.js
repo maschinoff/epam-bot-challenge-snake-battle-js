@@ -42,7 +42,7 @@ describe("bot", () => {
             '* ═►*' +
             '*****';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.UP);
+            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
         });
         it("should avoid wall", ()=> {
             const board =
@@ -52,7 +52,7 @@ describe("bot", () => {
             '*   *' +
             '*****';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN);
+            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
         });
 
         it("should try to catch apples", ()=> {
@@ -64,7 +64,7 @@ describe("bot", () => {
             '*    *' +
             '******';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN);
+            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
         });
 
         it("should try to catch gold", ()=> {
@@ -76,7 +76,26 @@ describe("bot", () => {
                 '*    *' +
                 '******';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.UP);
+            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
+        });
+
+
+        it("should avoid trappy apple", ()=> {
+            const board =
+                '☼☼☼☼☼☼☼☼☼☼☼' +
+                '☼         ☼' +
+                '☼   ☼☼☼☼☼☼☼' +
+                '☼   ☼○   ☼☼' +
+                '☼   ☼☼☼☼☼☼☼' +
+                '☼         ☼' +
+                '☼   ═►    ☼' +
+                '☼         ☼' +
+                '☼         ☼' +
+                '☼    ○    ☼' +
+                '☼☼☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
         });
 
         it('should return correct ratings', () => {
@@ -196,6 +215,44 @@ describe("bot", () => {
             const body = 5;
             const result = eatTheStone(body);
             expect(result).toEqual(false);
+        });
+
+        it('should rate stone correctly', () => {
+            const board =
+                '******' +
+                '* ╔═ *' +
+                '* ║ ●*' +
+                '* ╚═►*' +
+                '*    *' +
+                '******';
+            const position = getHeadPosition(board);
+            position.y--;
+            const result = rate(board, position, []);
+            expect(result).toEqual(10);
+        });
+
+        it('should eat the stone', () => {
+            const board =
+                '******' +
+                '* ╔═ *' +
+                '* ║ ●*' +
+                '* ╚═►*' +
+                '*    *' +
+                '******';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
+        });
+
+        it('should not eat the stone', () => {
+            const board =
+                '******' +
+                '* ╔  *' +
+                '* ║ ●*' +
+                '* ╚═►*' +
+                '*    *' +
+                '******';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
         });
     });
 
