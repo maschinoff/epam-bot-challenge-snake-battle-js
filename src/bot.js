@@ -22,7 +22,7 @@
 import { ELEMENT, COMMANDS } from './constants';
 import {
     isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
-    moveLeft, moveDown, moveRight, moveUp, getBoardAsString
+    moveLeft, moveDown, moveRight, moveUp, getBoardAsString, isAtrap
 } from './utils';
 
 // Bot Example
@@ -96,11 +96,23 @@ function maschinoff(board, logger){
 
     //Hunt apple if length less than 5
     const apples = getAllElementPositions(board, ELEMENT.APPLE);
-    const apple = findNearest(headPosition, apples);
+    let hunt = findNearest(headPosition, apples);
 
-    //Hunt apple if length more than 5
+    //Hunt gold
+    const golds = getAllElementPositions(board, ELEMENT.GOLD);
+    const gold = findNearest(headPosition, golds);
 
-    const raitings = getRatings(board, headPosition, apple);
+    hunt = findNearest(headPosition, [hunt, gold]);
+
+    //Hunt stone if length more than 5
+    if(eatTheStone(getMyLength(board))){
+        const stones = getAllElementPositions(board, ELEMENT.STONE);
+        const stone = findNearest(headPosition, stones);
+        hunt = findNearest(headPosition, [hunt, stone]);
+
+    }
+
+    const raitings = getRatings(board, headPosition, hunt);
 
     const command = getCommandByRaitings(raitings);
 
@@ -123,6 +135,10 @@ export function rate(board, position, moveTo){
             break;
         case ELEMENT.NONE:
             rate = 0;
+            //Check if is it trappy point
+            if(isAtrap(board, position)){
+                rate -Infinity;
+            }
             break;
         case ELEMENT.STONE:
             let lenght = getMyLength(board);
