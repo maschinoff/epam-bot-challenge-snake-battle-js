@@ -238,7 +238,7 @@ describe("bot", () => {
             const position = getHeadPosition(board);
             position.y++;
             const result = rate(board, position, []);
-            expect(result).toEqual(Infinity);
+            expect(result).toEqual(10000);
         });
 
         it('should rate default correctly', () => {

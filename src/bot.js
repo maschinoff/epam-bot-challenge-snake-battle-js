@@ -21,8 +21,7 @@
  */
 import { ELEMENT, COMMANDS } from './constants';
 import {
-    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
-    moveLeft, moveDown, moveRight, moveUp, getBoardAsString, isAtrap
+    isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance, isAtrap
 } from './utils';
 
 // Bot Example
@@ -115,9 +114,11 @@ function maschinoff(board, logger){
         hunt = findNearest(headPosition, [hunt, stone]);
     }
 
-    const raitings = getRatings(board, headPosition, hunt);
+    logger('Hunt:' + JSON.stringify(hunt));
 
-    const command = getCommandByRaitings(raitings);
+    const ratings = getRatings(board, headPosition, hunt);
+
+    const command = getCommandByRaitings(ratings);
 
     return command + dropTheStone(board);
 }
@@ -137,7 +138,11 @@ export function rate(board, position, moveTo){
     const element = getElementByXY(board, position);
     switch (element){
         case enemySnake(element):
+            rate = -10000;
             //if i'm in fury attack
+            if(inFury(board)){
+                rate = 100000
+            }
             //if i'm longer attack
             break;
         //If Element is my body
@@ -147,19 +152,15 @@ export function rate(board, position, moveTo){
         case ELEMENT.NONE:
             rate = 0;
             //Check if is it trappy point
-            if(isAtrap(board, position)){
+            if(isAtrap(board, position))
                 rate = -Infinity;
-            }
             break;
         case ELEMENT.STONE:
             let lenght = getMyLength(board);
             if(eatTheStone(lenght))
-            {
                 rate = 10;
-            }
-            else{
+            else
                 rate = -1000;
-            }
             break;
         case ELEMENT.APPLE:
             rate = 20;
@@ -171,7 +172,7 @@ export function rate(board, position, moveTo){
             rate = 60;
             break;
         case ELEMENT.FLYING_PILL:
-            rate = Infinity;
+            rate = 10000;
             break;
         default:
             rate = -Infinity;
@@ -186,6 +187,14 @@ export function rate(board, position, moveTo){
     }
 
     return rate;
+}
+
+function inFury(board){
+    const fury = board.indexOf(ELEMENT.HEAD_EVIL);
+    if(fury !== -1){
+        return true;
+    }
+    return false;
 }
 
 export function getMyLength(board){
@@ -203,7 +212,12 @@ export function eatTheStone(length){
     return length > 4 ? true : false;
 }
 
-export function enemySnake(){
+export function enemySnake(element){
+    const enemy = getEnemySnake();
+    const index = enemy.indexOf(element);
+    if(index !== -1){
+        return enemy[index];
+    }
     return false;
 }
 
@@ -213,12 +227,41 @@ export function mySnake(element){
     if(index !== -1){
         return snake[index];
     }
-
     return false;
 }
 
 function getEnemySnake(){
-    
+    let enemy = [];
+    return enemy.concat(getEnemyHeadElements(), getEnemyBodyElements(), getEnemyTailElements());
+}
+
+function getEnemyHeadElements(){
+    return [
+        ELEMENT.ENEMY_HEAD_UP,
+        ELEMENT.ENEMY_HEAD_DOWN,
+        ELEMENT.ENEMY_HEAD_LEFT,
+        ELEMENT.ENEMY_HEAD_RIGHT
+    ]
+}
+
+function getEnemyBodyElements(){
+    return [
+        ELEMENT.ENEMY_BODY_HORIZONTAL,
+        ELEMENT.ENEMY_BODY_LEFT_DOWN,
+        ELEMENT.ENEMY_BODY_LEFT_UP,
+        ELEMENT.ENEMY_BODY_RIGHT_DOWN,
+        ELEMENT.ENEMY_BODY_RIGHT_UP,
+        ELEMENT.ENEMY_BODY_VERTICAL,
+    ]
+}
+
+function getEnemyTailElements(){
+    return [
+        ELEMENT.ENEMY_TAIL_END_DOWN,
+        ELEMENT.ENEMY_TAIL_END_LEFT,
+        ELEMENT.ENEMY_TAIL_END_RIGHT,
+        ELEMENT.ENEMY_TAIL_END_UP,
+    ]
 }
 
 function getSnake(){
