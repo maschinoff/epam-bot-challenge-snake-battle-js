@@ -29,45 +29,46 @@ import {findNearest, getAllElementPositions, getElementByXY, getHeadPosition} fr
 
 describe("bot", () => {
     describe("getNextSnakeMove", ()=> {
-        const mockLogger = ()=> {};
+        const mockLogger = () => {
+        };
 
-        it("should define method", ()=> {
+        it("should define method", () => {
             expect(getNextSnakeMove).toBeDefined();
         });
-        it("should avoid horisontal wall", ()=> {
+        it("should avoid horisontal wall", () => {
             const board =
-            '*****' +
-            '*   *' +
-            '*   *' +
-            '* ═►*' +
-            '*****';
+                '*****' +
+                '*   *' +
+                '*   *' +
+                '* ═►*' +
+                '*****';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
+            expect(move).toEqual(COMMANDS.UP);
         });
-        it("should avoid wall", ()=> {
+        it("should avoid wall", () => {
             const board =
-            '*****' +
-            '* ═►*' +
-            '*   *' +
-            '*   *' +
-            '*****';
+                '*****' +
+                '* ═►*' +
+                '*   *' +
+                '*   *' +
+                '*****';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
-        });
-
-        it("should try to catch apples", ()=> {
-            const board =
-            '******' +
-            '* ═► *' +
-            '*  ○ *' +
-            '*    *' +
-            '*    *' +
-            '******';
-            const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
+            expect(move).toEqual(COMMANDS.DOWN);
         });
 
-        it("should try to catch gold", ()=> {
+        it("should try to catch apples", () => {
+            const board =
+                '******' +
+                '* ═► *' +
+                '*  ○ *' +
+                '*    *' +
+                '*    *' +
+                '******';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.DOWN);
+        });
+
+        it("should try to catch gold", () => {
             const board =
                 '******' +
                 '*  $ *' +
@@ -76,11 +77,11 @@ describe("bot", () => {
                 '*    *' +
                 '******';
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
+            expect(move).toEqual(COMMANDS.UP);
         });
 
 
-        it("should avoid trappy apple", ()=> {
+        it("should avoid trappy apple", () => {
             const board =
                 '☼☼☼☼☼☼☼☼☼☼☼' +
                 '☼         ☼' +
@@ -95,9 +96,65 @@ describe("bot", () => {
                 '☼☼☼☼☼☼☼☼☼☼☼';
 
             const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
+            expect(move).toEqual(COMMANDS.DOWN);
         });
 
+        it("should avoid trappy path", () => {
+            const board =
+                '☼☼☼☼☼☼☼☼☼☼☼☼' +
+                '☼        ○ ☼' +
+                '☼  ☼☼   ☼☼ ☼' +
+                '☼  ☼ ☼ ☼ ☼ ☼' +
+                '☼  ☼  ☼ ▲☼ ☼' +
+                '☼       ║  ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼          ☼' +
+                '☼☼☼☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.LEFT);
+        });
+
+        it('should eat the stone', () => {
+            const board =
+                '******' +
+                '* ╔═ *' +
+                '* ║ ●*' +
+                '* ╚═►*' +
+                '*    *' +
+                '******';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
+        });
+
+        it('should not eat the stone', () => {
+            const board =
+                '******' +
+                '*    *' +
+                '* ╔ ●*' +
+                '* ╚═►*' +
+                '*    *' +
+                '******';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.DOWN);
+        });
+
+        it('should attack the enemy', () => {
+            const board =
+                '☼☼☼☼☼' +
+                '☼ $ ☼' +
+                '☼═♥○☼' +
+                '☼ < ☼' +
+                '☼☼☼☼☼';
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.DOWN);
+        });
+    });
+
+    describe("getRatings", ()=> {
         it('should return correct ratings', () => {
             const board =
                 '******' +
@@ -211,8 +268,8 @@ describe("bot", () => {
             expect(result).toEqual(true);
         });
 
-        it('should be return false if body less or equal than 5', () => {
-            const body = 5;
+        it('should be return false if body less or equal than 4', () => {
+            const body = 4;
             const result = eatTheStone(body);
             expect(result).toEqual(false);
         });
@@ -229,30 +286,6 @@ describe("bot", () => {
             position.y--;
             const result = rate(board, position, []);
             expect(result).toEqual(10);
-        });
-
-        it('should eat the stone', () => {
-            const board =
-                '******' +
-                '* ╔═ *' +
-                '* ║ ●*' +
-                '* ╚═►*' +
-                '*    *' +
-                '******';
-            const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.UP+' '+COMMANDS.ACT);
-        });
-
-        it('should not eat the stone', () => {
-            const board =
-                '******' +
-                '* ╔  *' +
-                '* ║ ●*' +
-                '* ╚═►*' +
-                '*    *' +
-                '******';
-            const move = getNextSnakeMove(board, mockLogger);
-            expect(move).toEqual(COMMANDS.DOWN+' '+COMMANDS.ACT);
         });
     });
 
@@ -294,5 +327,11 @@ describe("bot", () => {
         const length = 8;
         const result = getMyLength(board);
         expect(result).toEqual(length);
+    });
+
+
+
+    it('should pursue the enemy', () => {
+
     });
 });

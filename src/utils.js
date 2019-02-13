@@ -75,6 +75,7 @@ export function isNear(board, x, y, element) {
 			  isAt(board, x, y - 1, element);
 }
 
+//Takes XY position and check if it's not the trap
 export function isAtrap(board, position){
     const surround = getSurround(board, position);
     const result = surround.filter((element => element === ELEMENT.WALL));

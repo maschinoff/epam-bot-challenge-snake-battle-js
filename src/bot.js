@@ -79,7 +79,7 @@ function getCommandByRaitings(raitings) {
         }
     }
 
-    return indexToCommand[maxIndex]+' '+COMMANDS.ACT;
+    return indexToCommand[maxIndex];
 }
 
 ////Maschinoff day II
@@ -98,25 +98,32 @@ function maschinoff(board, logger){
     const apples = getAllElementPositions(board, ELEMENT.APPLE);
     let hunt = findNearest(headPosition, apples);
 
-    //Hunt gold
+    //Hunt Evil pill if it is nearest than gold
+    const pills = getAllElementPositions(board, ELEMENT.FURY_PILL);
+    let pill = findNearest(headPosition, pills);
+    hunt = findNearest(headPosition, [hunt, pill]);
+
+    //Hunt gold if it closer then or equal apple
     const golds = getAllElementPositions(board, ELEMENT.GOLD);
     const gold = findNearest(headPosition, golds);
-
     hunt = findNearest(headPosition, [hunt, gold]);
 
-    //Hunt stone if length more than 5
+    //Hunt stone if length more than 5 and nearest than apple & gold
     if(eatTheStone(getMyLength(board))){
         const stones = getAllElementPositions(board, ELEMENT.STONE);
         const stone = findNearest(headPosition, stones);
         hunt = findNearest(headPosition, [hunt, stone]);
-
     }
 
     const raitings = getRatings(board, headPosition, hunt);
 
     const command = getCommandByRaitings(raitings);
 
-    return command;
+    return command + dropTheStone(board);
+}
+
+function dropTheStone(board){
+    return getMyLength(board) > 4 ? ' ACT' : '';
 }
 
 export function getRatings(board, position, apple){
@@ -129,6 +136,10 @@ export function rate(board, position, moveTo){
     let rate = -Infinity;
     const element = getElementByXY(board, position);
     switch (element){
+        case enemySnake(element):
+            //if i'm in fury attack
+            //if i'm longer attack
+            break;
         //If Element is my body
         case mySnake(element):
             rate = -10;
@@ -137,7 +148,7 @@ export function rate(board, position, moveTo){
             rate = 0;
             //Check if is it trappy point
             if(isAtrap(board, position)){
-                rate -Infinity;
+                rate = -Infinity;
             }
             break;
         case ELEMENT.STONE:
@@ -189,7 +200,11 @@ export function calculateLength(board){
 }
 
 export function eatTheStone(length){
-    return length > 5 ? true : false;
+    return length > 4 ? true : false;
+}
+
+export function enemySnake(){
+    return false;
 }
 
 export function mySnake(element){
@@ -200,6 +215,10 @@ export function mySnake(element){
     }
 
     return false;
+}
+
+function getEnemySnake(){
+    
 }
 
 function getSnake(){
