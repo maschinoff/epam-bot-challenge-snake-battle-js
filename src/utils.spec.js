@@ -33,7 +33,9 @@ import {
     moveUp,
     moveRight,
     moveDown,
-    moveLeft
+    moveLeft,
+    isAtrap,
+    moveTo
 } from './utils';
 import {
     ELEMENT
@@ -158,6 +160,32 @@ describe("utils", () => {
             const result = getAllElementPositions(board, ELEMENT.GOLD);
             expect(result).toEqual(res);
         });
+        it("should define if element in a trap", () => {
+            const board =
+                '☼☼☼☼☼☼' +
+                '☼○☼  ☼' +
+                '☼ =► ☼' +
+                '☼    ☼' +
+                '☼    ☼' +
+                '☼☼☼☼☼☼';
+            const position = {x: 1, y: 1}
+            const result = isAtrap(board, position);
+            expect(result).toEqual(true);
+        });
+
+        it("should not define if element in a trap", () => {
+            const board =
+                '☼☼☼☼☼☼' +
+                '☼ ○☼ ☼' +
+                '☼ =► ☼' +
+                '☼    ☼' +
+                '☼    ☼' +
+                '☼☼☼☼☼☼';
+            const position = {x: 2, y: 1}
+            const result = isAtrap(board, position);
+            expect(result).toEqual(false);
+        });
+
     });
 
     describe("find nearest from corner", () => {
@@ -267,6 +295,36 @@ describe("utils", () => {
             const position = {x: 2, y: 2};
             const res = {x: 1, y: 2};
             const result = moveLeft(position);
+            expect(result).toEqual(res);
+        });
+    });
+
+    describe('moves string', () => {
+       it('should moves up', () => {
+           const position = {x: 2, y: 2};
+           const res = {x:2, y: 1};
+           const result = moveTo(position, 'UP');
+           expect(result).toEqual(res);
+       });
+
+        it('should moves up', () => {
+            const position = {x: 2, y: 2};
+            const res = {x:3, y: 2};
+            const result = moveTo(position, 'RIGHT');
+            expect(result).toEqual(res);
+        });
+
+        it('should moves up', () => {
+            const position = {x: 2, y: 2};
+            const res = {x:2, y: 3};
+            const result = moveTo(position, 'DOWN');
+            expect(result).toEqual(res);
+        });
+
+        it('should moves up', () => {
+            const position = {x: 2, y: 2};
+            const res = {x:1, y: 2};
+            const result = moveTo(position, 'LEFT');
             expect(result).toEqual(res);
         });
     });

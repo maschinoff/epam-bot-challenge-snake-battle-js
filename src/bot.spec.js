@@ -25,7 +25,7 @@ import {
 import {
     COMMANDS, ELEMENT
 } from './constants';
-import {findNearest, getAllElementPositions, getHeadPosition} from "./utils";
+import {findNearest, getAllElementPositions, getElementByXY, getHeadPosition} from "./utils";
 
 describe("bot", () => {
     describe("getNextSnakeMove", ()=> {
@@ -202,51 +202,40 @@ describe("bot", () => {
     it('should calculate length properly', () => {
         const board =
             '******' +
-            '* ╔=►*' +
+            '* ╔═►*' +
             '* ║ 8*' +
             '* ╚╗ *' +
-            '* ╓╝ *' +
+            '* ╔╝ *' +
             '******';
-        const length = 9;
+        const length = 8;
         const result = getMyLength(board);
         expect(result).toEqual(length);
     });
 
-    describe('calculate', () => {
-        it('should move left', () => {
-            const board =
-                '******' +
-                '* ╔=►*' +
-                '* ║ 8*' +
-                '* ╚╗ *' +
-                '* ╓╝ *' +
-                '******';
-            const head = getHeadPosition(board);
-            const result = getDirection(head);
-            expect(true).toEqual(false);
-        });
+    it('should calculate length properly', () => {
+        const board =
+            '******' +
+            '* ◄═╗*' +
+            '* ╔ ║*' +
+            '* ╚═╝*' +
+            '*    *' +
+            '******';
+        const length = 8;
+        const result = getMyLength(board);
+        expect(result).toEqual(length);
     });
 
-    describe('get direction', () => {
-        it('should return down', () => {
-           const element = ELEMENT.HEAD_UP;
-           const result = getDirection(element);
-           expect(result).toEqual(1);
-        });
-        it('should return up', () => {
-            const element = ELEMENT.HEAD_DOWN;
-            const result = getDirection(element);
-            expect(result).toEqual(0);
-        });
-        it('should return left', () => {
-            const element = ELEMENT.HEAD_RIGHT;
-            const result = getDirection(element);
-            expect(result).toEqual(0);
-        });
-        it('should return left', () => {
-            const element = ELEMENT.HEAD_LEFT;
-            const result = getDirection(element);
-            expect(result).toEqual(1);
-        });
+    it('should calculate length properly II', () => {
+        const board =
+            '*******' +
+            '* ╔═► *' +
+            '* ║ 8 *' +
+            '* ╚╗  *' +
+            '* ╔╝  *' +
+            '*     *' +
+            '*******';
+        const length = 8;
+        const result = getMyLength(board);
+        expect(result).toEqual(length);
     });
 });

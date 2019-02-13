@@ -75,6 +75,23 @@ export function isNear(board, x, y, element) {
 			  isAt(board, x, y - 1, element);
 }
 
+export function isAtrap(board, position){
+    const surround = getSurround(board, position);
+    const result = surround.filter((element => element == ELEMENT.WALL));
+
+    return (result.length > 2) ? true : false;
+}
+
+function getSurround(board, position) {
+    const p = position;
+    return [
+        getElementByXY(board, {x: p.x - 1, y: p.y }), // LEFT
+        getElementByXY(board, {x: p.x, y: p.y -1 }), // UP
+        getElementByXY(board, {x: p.x + 1, y: p.y}), // RIGHT
+        getElementByXY(board, {x: p.x, y: p.y + 1 }) // DOWN
+    ];
+}
+
 export function isOutOf(board, x, y) {
     const boardSize = getBoardSize(board);
     return x >= boardSize || y >= boardSize || x < 0 || y < 0;
@@ -125,7 +142,9 @@ export function getAllElementPositions(board, element){
     const positions = [];
     for(let i = 0; i < board.length; i++){
         if(board[i] === element)
-            positions.push(getXYByPosition(board, i));
+            //If element in trap
+            if(!isAtrap(board, i))
+                positions.push(getXYByPosition(board, i));
     }
 
     return positions.length ? positions : [];
@@ -152,6 +171,21 @@ export function getSurroundsCoord(position){
         {x: position.x + 1, y: position.y},
         {x: position.x, y: position.y + 1}
     ]
+}
+
+export function moveTo(position, direction){
+    switch (direction){
+        case 'UP':
+            return moveUp(position);
+        case 'RIGHT':
+            return moveRight(position);
+        case 'DOWN':
+            return moveDown(position);
+        case 'LEFT':
+            return moveLeft(position);
+        default:
+            break;
+    }
 }
 
 export function moveUp(position){

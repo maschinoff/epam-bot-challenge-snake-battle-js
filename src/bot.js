@@ -22,7 +22,7 @@
 import { ELEMENT, COMMANDS } from './constants';
 import {
     isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
-    moveLeft, moveDown, moveRight, moveUp
+    moveLeft, moveDown, moveRight, moveUp, getBoardAsString
 } from './utils';
 
 // Bot Example
@@ -48,16 +48,6 @@ export function getNextSnakeMove(board, logger) {
     //
     // return command;
     return maschinoff(board, logger);
-}
-
-function getSurround(board, position) {
-    const p = position;
-    return [
-        getElementByXY(board, {x: p.x - 1, y: p.y }), // LEFT
-        getElementByXY(board, {x: p.x, y: p.y -1 }), // UP
-        getElementByXY(board, {x: p.x + 1, y: p.y}), // RIGHT
-        getElementByXY(board, {x: p.x, y: p.y + 1 }) // DOWN
-    ];
 }
 
 function rateElement(element) {
@@ -132,7 +122,7 @@ export function rate(board, position, moveTo){
             rate = 0;
             break;
         case ELEMENT.STONE:
-            if(eatTheStone(getMyLength(board)))
+            if(eatTheStone(2))
             {
                 rate = 10;
             }
@@ -166,78 +156,14 @@ export function rate(board, position, moveTo){
 }
 
 export function getMyLength(board){
-    let length = 1;
-    const head = getHeadPosition(board);
+    return calculateLength(board);
+}
 
-    length += calculateLength(board, head);
+export function calculateLength(board){
+    const str = getSnake().join('');
+    const snake = new RegExp('[^'+str+']', 'g');
+    const length = board.replace(snake, "").length;
     return length;
-}
-
-export function calculateLength(board, elementPos, direction = false){
-    const element = getElementByXY(board, elementPos);
-    if(!direction){
-        direction = getDirection(element);
-    }
-
-    if(getTailElements().indexOf(element)){
-        return 0
-    }
-    else{
-        let next = elementPos;
-        switch(element, direction){
-            case ELEMENT.HEAD_DOWN:
-                next = moveUp(elementPos);
-                break;
-            case ELEMENT.HEAD_UP:
-                break;
-            case ELEMENT.BODY_HORIZONTAL:
-                next = moveLeft(elementPos);
-                break;
-            case ELEMENT.BODY_VERTICAL:
-                next = moveDown(elementPos);
-                break;
-            case ELEMENT.BODY_LEFT_DOWN:
-                next = moveDown(elementPos);
-                break;
-            case ELEMENT.BODY_LEFT_UP:
-                next = moveLeft(elementPos);
-                break;
-            case ELEMENT.BODY_RIGHT_DOWN:
-                next = moveDown(elementPos);
-                break;
-            case ELEMENT.BODY_LEFT_UP:
-                next = moveRight(elementPos);
-                break;
-            default:
-                return 0;
-                break;
-        }
-        calculateLength(board, next, direction);
-        return 1;
-    }
-}
-
-export function getDirection(element){
-    let direction = null;
-
-    switch(element){
-        case ELEMENT.HEAD_UP:
-            direction = 1;
-            break;
-        case ELEMENT.HEAD_RIGHT:
-            direction = 0;
-            break;
-        case ELEMENT.HEAD_DOWN:
-            direction = 0;
-            break;
-        case ELEMENT.HEAD_LEFT:
-            direction = 1;
-            break;
-        default:
-            break;
-    }
-
-    return direction;
 }
 
 export function eatTheStone(length){
@@ -245,14 +171,19 @@ export function eatTheStone(length){
 }
 
 export function mySnake(element){
-    let snake = [];
-    snake = snake.concat(getHeadElements(), getBodyElements(), getTailElements());
+    const snake = getSnake();
     const index = snake.indexOf(element);
     if(index !== -1){
         return snake[index];
     }
 
     return false;
+}
+
+function getSnake(){
+    let snake = [];
+    return snake.concat(getHeadElements(), getBodyElements(), getTailElements());
+
 }
 
 function getHeadElements(){
