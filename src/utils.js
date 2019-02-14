@@ -22,6 +22,7 @@
 import {
   ELEMENT
 } from './constants';
+import {getEnemyHeadBonusElements, getEnemyHeadElements, getEnemySnake} from "./bot";
 
 // Here is utils that might help for bot development
 export function getBoardAsString(board) {
@@ -81,6 +82,15 @@ export function isAtrap(board, position){
     const result = surround.filter((element => element === ELEMENT.WALL));
 
     return (result.length > 2) ? true : false;
+}
+//Takes XY position and check if it's enemy head near
+export function isEnemy(board, position){
+    const surround = getSurround(board, position);
+    const enemyHead = getEnemyHeadElements().concat(getEnemyHeadBonusElements());
+    const result = surround.find(element => {
+        return enemyHead.indexOf(element) !== -1 ? true : false;
+    });
+    return result !== undefined;
 }
 
 function getSurround(board, position) {
@@ -143,10 +153,11 @@ export function getAllElementPositions(board, element){
     const positions = [];
     for(let i = 0; i < board.length; i++){
         if(board[i] === element){
-            //If element in trap
-            if(!isAtrap(board, getXYByPosition(board, i)))
+            //If element in trap or Enemy head close
+            const position = getXYByPosition(board, i);
+            if(!isAtrap(board, position) && !isEnemy(board, position))
             {
-                positions.push(getXYByPosition(board, i));
+                positions.push(position);
             }
         }
     }

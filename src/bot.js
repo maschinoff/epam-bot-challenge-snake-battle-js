@@ -22,7 +22,7 @@
 import { ELEMENT, COMMANDS } from './constants';
 import {
     isGameOver, getHeadPosition, getElementByXY, getSurroundsCoord, getAllElementPositions, findNearest, getDistance,
-    isAtrap, getXYByPosition
+    isAtrap, getXYByPosition, isEnemy
 } from './utils';
 
 // Bot Example
@@ -162,7 +162,7 @@ export function rate(board, position, moveTo){
         case ELEMENT.NONE:
             rate = 0;
             //Check if is it trappy point
-            if(isAtrap(board, position))
+            if(isAtrap(board, position) || isEnemy(board, position))
                 rate = -Infinity;
             break;
         case ELEMENT.STONE:
@@ -257,12 +257,18 @@ export function getEnemySnake(){
     return enemy.concat(getEnemyHeadElements(), getEnemyBodyElements(), getEnemyTailElements());
 }
 
-function getEnemyHeadElements(){
+export function getEnemyHeadElements(){
     return [
         ELEMENT.ENEMY_HEAD_UP,
         ELEMENT.ENEMY_HEAD_DOWN,
         ELEMENT.ENEMY_HEAD_LEFT,
         ELEMENT.ENEMY_HEAD_RIGHT
+    ]
+}
+
+export function getEnemyHeadBonusElements(){
+    return [
+        ELEMENT.ENEMY_HEAD_EVIL
     ]
 }
 

@@ -191,6 +191,38 @@ describe("bot", () => {
             const move = getNextSnakeMove(board, mockLogger);
             expect(move).toEqual(COMMANDS.UP);
         });
+
+        it('exclude the element near enemy head', () => {
+            const board =
+                '☼☼☼☼☼☼☼☼☼' +
+                '☼       ☼' +
+                '☼─────>○☼' +
+                '☼       ☼' +
+                '☼      ▲☼' +
+                '☼      ║☼' +
+                '☼       ☼' +
+                '☼       ☼' +
+                '☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.LEFT);
+        });
+
+        it('should avoid enemy head', () => {
+            const board =
+                '☼☼☼☼☼☼☼☼☼' +
+                '☼       ☼' +
+                '☼─────>○☼' +
+                '☼      ▲☼' +
+                '☼      ║☼' +
+                '☼       ☼' +
+                '☼       ☼' +
+                '☼       ☼' +
+                '☼☼☼☼☼☼☼☼☼';
+
+            const move = getNextSnakeMove(board, mockLogger);
+            expect(move).toEqual(COMMANDS.LEFT);
+        });
     });
 
     describe("getRatings", ()=> {
