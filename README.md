@@ -1,4 +1,4 @@
-# Snake battle
+# Snake battle - 61th place in final
 JavaScript Bot example for UI challenge
 
 ## Useful Links
